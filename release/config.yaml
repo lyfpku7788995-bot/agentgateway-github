@@ -1,0 +1,55 @@
+binds:
+- port: 3000
+  listeners:
+  - routes:
+    - backends:
+      - mcp:
+          targets:
+          - name: server-everything
+            stdio:
+              cmd: npx
+              args:
+              - -y
+              - '@modelcontextprotocol/server-everything'
+      - mcp:
+                  targets:
+                    - name: mcp-demo
+                      stdio:
+                        cmd: python
+                        args:
+                          - /home/lyfpku/AgentGateway/McpRun/mcp_demo/server.py
+      policies:
+        cors:
+          allowOrigins:
+          - '*'
+          allowMethods:
+          - GET
+          - POST
+          - OPTIONS
+          allowHeaders:
+          - mcp-protocol-version
+          - content-type
+          - cache-control
+          - Accept
+          exposeHeaders:
+          - Mcp-Session-Id
+          allowCredentials: true    
+
+- port: 3001  
+  listeners:
+  - protocol: HTTP
+    routes:
+    - backends:
+      - host: 127.0.0.1:8000
+
+llm:        #默认是4000端口
+  models:
+  - name: qwen3.6-plus
+    provider: openAI          # 仍用 OpenAI 协议格式
+    params:
+      model: qwen3.6-plus
+      apiKey: "$MY_ALI_API_KEY"         # 若上游不需要 key 可填占位符
+      baseUrl: https://dashscope.aliyuncs.com/compatible-mode/v1  # 关键：覆盖默认 api.openai.com
+
+
+
